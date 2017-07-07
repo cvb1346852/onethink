@@ -1,0 +1,92 @@
+<extend name="Public/base"/>
+
+<block name="body">
+	<div class="main-title">
+		<h2>
+			{$info['id']?'编辑':'新增'}租售
+		</h2>
+	</div>
+	<form action="{:U()}" method="post" class="form-horizontal">
+		<div class="form-item">
+			<label class="item-label">标题<span class="check-tips">（用于显示的文字）</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="title" value="{$info.title|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">类型<span class="check-tips">（用于显示的文字）</span></label>
+			<div class="controls">
+				<select name="type">
+					<option value="0" <eq name="info.type" value="0" >selected</eq>>售卖</option>
+					<option value="1" <eq name="info.type" value="1" >selected</eq>>出租</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">价格<span class="check-tips">（用于调转的URL，支持带http://的URL或U函数参数格式）</span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="price" value="{$info.price|default=''}">
+				单位：
+				<select name="target">
+					<option value="0" <eq name="info.target" value="0" >selected</eq>>元/月</option>
+					<option value="1" <eq name="info.target" value="1" >selected</eq>>万元</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="form-item">
+			<label class="item-label">姓名<span class="check-tips"></span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="name" value="{$info.type|default=''}">
+			</div>
+		</div>
+
+		<div class="form-item">
+			<label class="item-label">电话<span class="check-tips"></span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="tel" value="{$info.tel|default=''}">
+			</div>
+		</div>
+
+		<div class="form-item">
+			<label class="item-label">截止时间<span class="check-tips"></span></label>
+			<div class="datetime controls">
+				<input type="text" name="last_time" class="text time" value="<?php echo  $info['id']?date('Y-m-d H:i',$info['last_time']):'' ?>" placeholder="请选择时间" />
+			</div>
+		</div>
+
+		<div class="form-item">
+			<label class="item-label">内容<span class="check-tips"></span></label>
+			<div class="textarea  controls">
+				<textarea name="content">{$info.content|default=''}</textarea>
+				{:hook('adminArticleEdit', array('name'=>$field['name'],'value'=>$field['value']))}
+			</div>
+		</div>
+
+
+		<div class="form-item">
+			<input type="hidden" name="id" value="{$info.id|default=''}">
+			<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">确 定</button>
+			<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+		</div>
+	</form>
+</block>
+<block name="script">
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script type="text/javascript" charset="utf-8">
+	//导航高亮
+	highlight_subnav('{:U('index')}');
+    $(function(){
+        $('.time').datetimepicker({
+            format: 'yyyy-mm-dd hh:ii',
+            language:"zh-CN",
+            minView:2,
+            autoclose:true
+        });
+	});
+</script>
+</block>
