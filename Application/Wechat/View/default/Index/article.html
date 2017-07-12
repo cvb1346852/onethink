@@ -1,0 +1,59 @@
+<extend name="Base/wechat" />
+<block name="body">
+
+    <div class="container-fluid" id="list">
+        <volist name="list" id="article">
+            <div class="row noticeList" data-category="{$article.category_id}">
+                <a href="{:U('Index/articleContent',[id=>$article['id']])}">
+                    <div class="col-xs-2">
+                        <img class="noticeImg" src="{$article.path}" />
+                    </div>
+                    <div class="col-xs-10">
+                        <p class="title">{$article.title}</p>
+                        <p class="intro">{$article.description}</p>
+                        <p class="info">{$article.view} <span class="pull-right">{$article.time}</span> </p>
+                    </div>
+                </a>
+            </div>
+        </volist>
+    </div>
+    <?php if($list != null){?>
+    <div class="text-center">
+        <button type="button" class="btn btn-info ajax-page" id="btn">获取跟多~~~</button>
+    </div>
+    <?php }else{ echo '请等待更新';} ?>
+    </div>
+</block>
+<block name="script">
+    <script >
+        var p = 1;
+        $('.text-center').on('click','.ajax-page',function () {
+//        $('.ajax-page').click(function(){
+            p++;
+            var category_id = $('.noticeList:first').attr('data-category');
+            var url = 'wechat.php?s=/Index/article/id/'+category_id+'/p/'+p;
+            var html = '';
+            $.getJSON(url,function (data) {
+                if($(data).length){
+                    $(data).each(function () {
+                        html += '<div class="row noticeList" >\
+                            <a href="/wechat.php?s=/Index/articleContent/id/'+this.id+'">\
+                            <div class="col-xs-2">\
+                            <img class="noticeImg" src="'+this.path+'" />\
+                            </div>\
+                            <div class="col-xs-10">\
+                            <p class="title">'+this.title+'</p>\
+                        <p class="intro">'+this.description+'</p>\
+                        <p class="info">'+this.view+' <span class="pull-right">'+this.time+'</span> </p>\
+                        </div>\
+                        </a>\
+                        </div>';
+                    });
+                   $('#list').append(html);
+                }else{
+                    $('#btn').attr('class','btn btn-info').html('没有啦,别点了')
+                }
+            })
+        })
+    </script>
+</block>

@@ -85,6 +85,8 @@
             
 
             
+	<script type="text/javascript" src="/Public/static/uploadify/jquery.uploadify.min.js"></script>
+
 	<div class="main-title">
 		<h2>
 			<?php echo ($info['id']?'编辑':'新增'); ?>租售
@@ -111,7 +113,7 @@
 			<div class="controls">
 				<input type="text" class="text input-large" name="price" value="<?php echo ((isset($info["price"]) && ($info["price"] !== ""))?($info["price"]):''); ?>">
 				单位：
-				<select name="target">
+				<select name="">
 					<option value="0" <?php if(($info["target"]) == "0"): ?>selected<?php endif; ?>>元/月</option>
 					<option value="1" <?php if(($info["target"]) == "1"): ?>selected<?php endif; ?>>万元</option>
 				</select>
@@ -143,10 +145,53 @@
 			<label class="item-label">内容<span class="check-tips"></span></label>
 			<div class="textarea  controls">
 				<textarea name="content"><?php echo ((isset($info["content"]) && ($info["content"] !== ""))?($info["content"]):''); ?></textarea>
-				<?php echo hook('adminArticleEdit', array('name'=>$field['name'],'value'=>$field['value']));?>
+				<?php echo hook('adminArticleEdit', array('name'=>$info['name'],'value'=>$info['value']));?>
 			</div>
 		</div>
 
+		<div class=" form-item">
+			<label class="item-label">图片<span class="check-tips"></span></label>
+			<input type="file" id="upload_picture_pash" >
+			<input type="hidden" name="path" id="cover_id_pash"/>
+			<div class="upload-img-box">
+				<?php if(!empty($data['path'])): ?><div class="upload-pre-item"><img src="<?php echo (get_cover($data['path'],'path')); ?>"/></div><?php endif; ?>
+			</div>
+		</div>
+		<script type="text/javascript">
+            //上传图片
+			/* 初始化上传插件 */
+            $("#upload_picture_pash").uploadify({
+                "height"          : 30,
+                "swf"             : "/Public/static/uploadify/uploadify.swf",
+                "fileObjName"     : "download",
+                "buttonText"      : "上传图片",
+                "uploader"        : "<?php echo U('File/uploadPicture',array('session_id'=>session_id()));?>",
+                "width"           : 120,
+                'removeTimeout'	  : 1,
+                'fileTypeExts'	  : '*.jpg; *.png; *.gif;',
+                "onUploadSuccess" : uploadPicturepash,
+            'onFallback' : function() {
+                alert('未检测到兼容版本的Flash.');
+            }
+            });
+            function uploadPicturepash(file, data){
+                var data = $.parseJSON(data);
+                var src = '';
+                if(data.status){
+                    src = data.url || '' + data.path
+                    $("#cover_id_pash").val(src);
+                    $("#cover_id_pash").parent().find('.upload-img-box').html(
+                        '<div class="upload-pre-item"><img src="' + src + '"/></div>'
+                    );
+                } else {
+                    updateAlert(data.info);
+                    setTimeout(function(){
+                        $('#top-alert').find('button').click();
+                        $(that).removeClass('disabled').prop('disabled',false);
+                    },1500);
+                }
+            }
+		</script>
 
 		<div class="form-item">
 			<input type="hidden" name="id" value="<?php echo ((isset($info["id"]) && ($info["id"] !== ""))?($info["id"]):''); ?>">

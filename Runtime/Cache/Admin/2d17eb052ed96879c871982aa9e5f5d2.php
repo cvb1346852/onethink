@@ -136,6 +136,10 @@
             </tbody>
         </table>
     </div>
+    <!-- 分页 -->
+    <div class="page">
+        <?php echo ($page); ?>
+    </div>
 
         </div>
         <div class="cont-ft">

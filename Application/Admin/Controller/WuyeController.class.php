@@ -18,9 +18,14 @@ class WuyeController extends AdminController
      */
     public function index(){
         $map  = array('status' => array('gt', -1));
-        $list = D('Zushou')->where($map)->select();
+        $count = D('Zushou')->where($map)->count();
+        $page = new \Think\Page($count,2);
+        $show = $page->show();
+        $list = D('Zushou')->where($map)->limit($page->firstRow.','.$page->listRows)->select();
+
 //        $list = $this->parseDocumentList($list);
         $this->assign('list', $list);
+        $this->assign('page', $show);
         $this->meta_title = '物业管理';
         $this->display();
     }
@@ -28,8 +33,9 @@ class WuyeController extends AdminController
         if(IS_POST){
             $Zushou = D('Zushou');
             $data = $Zushou->create();
-            $data['last_time'] = strtotime($data['last_time']);
+//            var_dump($data);exit;
             if($data){
+                $data['last_time'] = strtotime($data['last_time']);
                 $id = $Zushou->add($data);
 
                 if($id){
@@ -52,9 +58,8 @@ class WuyeController extends AdminController
         if(IS_POST){
             $Zushou = D('Zushou');
             $data = $Zushou->create();
-//            var_dump($data);exit;
-            $data['last_time'] = strtotime($data['last_time']);
             if($data){
+                $data['last_time'] = strtotime($data['last_time']);
                 if($Zushou->save($data)){
                     //记录行为
                     action_log('update_zushou', 'zushou', $data['id'], UID);
